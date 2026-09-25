@@ -19,8 +19,8 @@
 # in the templates via {{ site.myvariable }}.
 
 header_pages:
-  - index.md
-  - about.md
+  - index.markdown
+  - about.markdown
 
 
 title: Yet-another-personal-blog
