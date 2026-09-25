@@ -4,4 +4,9 @@
 
 layout: default
 title: yet-another-personal-blog
+permalink: /
 ---
+
+Welcome!
+
+This is just another personal blog. I hope I will post engaging enough content.
