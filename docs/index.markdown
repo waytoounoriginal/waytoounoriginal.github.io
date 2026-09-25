@@ -13,7 +13,5 @@ This is just another personal blog. I hope I will post engaging enough content.
 
 
 {% for post in site.posts %}
-  <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
-  <small>{{ post.date | date: "%Y-%m-%d" }}</small>
-  <p>{{ post.excerpt }}</p>
+  [ {{post.date}} ] - <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
 {% endfor %}
