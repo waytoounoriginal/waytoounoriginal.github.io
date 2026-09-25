@@ -28,9 +28,10 @@ url: "https://waytoounoriginal.github.io" # the base hostname & protocol for you
 github_username:  waytoounoriginal
 
 # Build settings
-theme: minima
+remote_theme: b2a3e8/jekyll-theme-console
 plugins:
   - jekyll-feed
+  - jekyll-seo-tag
 
 # Exclude from processing.
 # The following items will not be processed, by default.
