@@ -17,7 +17,7 @@ As the people coming from my Linkedin might know, I am wrapping up my internship
 
 <small> *As a side note, I believe that me having to work on production systems has allowed me to truly enjoy this internship, and I hope more internships would take this approach. It also allowed me to see how fun it is to benchmark and see colorful lines go up and down!* </small>
 
-Coming back, I was part of a fairly small team, around 4.5 people (.5 due to 1 being active in 2 projects), so, honestly, work has felt more like a startup than a FAANG (or MAANG, MANGOS, GAYMAN, or however it will be next week). I basically had my cake and ate it too, since I had a rather large amount of ownership and freedom in my tasks.
+Coming back, I was part of a fairly small team, around 4.5 people (.5 due to 1 being active in 2 projects), so, honestly, work has felt more like a startup than a FAANG (or MAANG, MANGOS, GAYMAN, or whatever it will be next week). I basically had my cake and ate it too, since I had a rather large amount of ownership and freedom in my tasks.
 
 Today I won't focus on the boring parts (integration tests), but rather I want to tell you, my dear reader, about **how my stats course finally mattered at the job, and about how much I hate Java**.
 
