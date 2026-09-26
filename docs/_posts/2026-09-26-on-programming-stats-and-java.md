@@ -176,7 +176,7 @@ R = 10 (approx)
 
 Wow, all this math only to find that, with the naive approach of having 1 set storing the first 8 bytes of the sha256, we'd toss a coin on the 10th run already. **This is bad**.
 
-Hmm, what if *instead of 1 set, we have **2**?* One for the 1st byte, another for the 2nd byte. We'd need a false positive in both sets this way.
+Hmm, what if *instead of 1 set, we have **2**?* One for the frist 8 bytes, another for the next 8 bytes. We'd need a false positive in both sets this way.
 
 Doing the math again... *(truth be told I used a matlab script for this):*
 
