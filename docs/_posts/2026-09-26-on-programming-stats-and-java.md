@@ -5,6 +5,8 @@ date:   2026-09-26
 categories: programming stats optimizations
 ---
 
+*With love, to my dear girlfriend*
+
 <small> *poof* </small>
 
 That's the sound of this blog being born into existence, as this is the first post on it. It is also about the problem that gave me the idea to have a blog in the first place.
@@ -81,7 +83,38 @@ I moved on to a different approach, and eyed this one library *with close to 0 o
 
 Now, narrowing *what I thought to be* full SHA-256 strings to 8 bytes seemed **risky, to say the least**. Thankfully, my mentor, who had a master in statistics, thought the same thing and prompted me to compute the *probabilities of false-positives in the narrowing case*.
 
-*This started a series of 3 days of a vicious cycle: I computed something -> I got happy the result seemed good -> I started double-guessing myself -> Debated with the hallucination machines -> I computed something ...*
+*This started a series of 3 days of a vicious cycle*
+```text
+               ┌────────────────────┐
+               │                    │
+               ▼                    │
+┌─────────────────────────────┐     │
+│  1. Computed something      │     │
+└──────────────┬──────────────┘     │
+               ▼                    │
+┌─────────────────────────────┐     │
+│  2. Got happy — result      │     │
+│     seemed good             │     │
+└──────────────┬──────────────┘     │
+               ▼                    │
+┌─────────────────────────────┐     │
+│  3. Girlfriend doubted my   │     │
+│     statistical competence  │     │
+└──────────────┬──────────────┘     │
+               ▼                    │
+┌─────────────────────────────┐     │
+│  4. Started double-guessing │     │
+│     myself                  │     │
+└──────────────┬──────────────┘     │
+               ▼                    │
+┌─────────────────────────────┐     │
+│  5. Debated with the        │     │
+│     hallucination machines  │     │
+└──────────────┬──────────────┘     │
+               │                    │
+               └────────────────────┘
+                    (loop forever)
+```
 
 Ultimately I got sick of wondering whether to use the birthday formula *(my mentor put that thought in my head; didn't even know what it was used for before)* or not, so I took my own approach.
 
@@ -97,7 +130,7 @@ Avg. row size = 2KB
 N = 500M
 Precision = 64 (so 2^64 total possibilities)
 
-M = # of iterations (the # will grow each run by N) = 0, 500M, 1B, 1.5B, ... = i * M
+M = # of iterations (the # will grow each run by N) = 0, 500M, 1B, 1.5B, ... = i * N
 
 P(false-positive in 1 iteration) = 500M / 2^64 = q
 P(no false-positive in 1 iteration) = 1 - q
@@ -179,7 +212,7 @@ Great! Time to run the test again aaand... Ewreka! **We got the expected 75% red
 
 Truth is though, when running a 400GB test on a single container (remember, prod is 4x the beta containers), I somehow got **a ~10x reduction in memory** and I have absolutely no idea why. What Claude hallucinated is that it could be because if some GC shenenigains, but no idea. But nor do I care, since the result is better than what I've hoped for.
 
-<img src="/res/math_paper.jpeg" alt="the 'napkin' math" width="0.5vw">
+<img src="/res/math_paper.jpeg" alt="the 'napkin' math" width="50vw">
 <small>Ugh, got the wrong approximation formula for ln(1-q) on the pic. Bummer...</small>
 
 ---
@@ -200,5 +233,7 @@ But aside from this, there is a really positive message behind all of this: **ma
 
 But man, oh man! How good it feels to solve problems again! I can say that for the past few days I've had the same feeling I had while programming pre-LLM era. *It felt GREAT*. I truly hope to be have more such opportunities from now on!
 
-But I believe that's all for this post. Hopefully I did not bore you too much, dear reader. 'Til we see again!
+But I believe that's all for this post. Hopefully I did not bore you too much, dear reader. 
+
+'Til we see again!
 
