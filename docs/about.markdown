@@ -4,15 +4,49 @@ title: About
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
+          ..
+          =-=.
+          =-==.              .:---:
+          =-===:            :==----.
+          -:-===-::.     .:-==:::---
+         .:----=====-----===-:--===-
+       .:::-:::=====-:--==----------
+     .::--::::-==--::::::------==---
+    :::--::.:-==-:---::::::--==---=-
+   .-:-+##*.::--:-:--:::::::-:----=-
+   -:.=%@%.:-:--:=*##:-:::::::-:--=-
+  .:..:-=:::::-:=%:*%%*::::::::::---
+ .:.:.:-::-----:----=--::......:::--.
+.::::%%#%%#-:::-::..............:--::
+ :.::%%%%@@-:.:::..............::--:-:
+....:+%%%#=....:..............::--::::.
+.:..:###*+::.::.#::.:.......::-----::-:
+ .:..:#%%%@%=*%#=:::.......:----:-::---.
+  .....::::::::...........:-----:::::---
+   .......................:---:::::::-:=
+   .....................::::::::::::----
+  .....................::....:::::-:::--
+  .............................::.....:-.
+  ....................................::.
+  ..................................::-:.
+   .................................::::.
+    ...................................
+<small> 
+_gracefully taken from [asciiart](https://asciiart.website/art/6620)_
+</small>
 
-You can find the source code for Minima at GitHub:
-[jekyll][jekyll-organization] /
-[minima](https://github.com/jekyll/minima)
+Hi there! I'm Mihai Tira, currently a student in my 3rd year of bachelor's.
 
-You can find the source code for Jekyll at GitHub:
-[jekyll][jekyll-organization] /
-[jekyll](https://github.com/jekyll/jekyll)
+I'm still finding out what I like, but what piques my interest seems to be:
+- compilers (currently learning LLVM)
+- performance tuning & benchmarking
+- low-level programming in general
 
+Arguably I should be also a programmer, but since the LLM-boom I've been feeling less and less like so. But there are the _little moments_ in which I get my spark back. I hope to be able to relate some of those experiences here!
 
-[jekyll-organization]: https://github.com/jekyll
+Hope the content is going to be engaging/educational enough. If not, oh well...
+
+---
+
+Linkedin: https://www.linkedin.com/in/waytoounoriginal/
+Github: https://github.com/waytoounoriginal
