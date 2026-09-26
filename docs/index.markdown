@@ -12,5 +12,5 @@ Welcome!
 This is just another personal blog. I hope I will post engaging enough content.
 
 {% for post in site.posts %}
-- [{{ post.date | date: "%Y-%m-%d" }}] [{{ post.title }}]({{ post.url | relative_url }})
+[{{ post.date | date: "%Y-%m-%d" }}] [{{ post.title }}]({{ post.url | relative_url }})
 {% endfor %}
