@@ -210,7 +210,7 @@ Honestly, if the math is right, and by absurd a 1TB ingestion would run each day
 
 Great! Time to run the test again aaand... Ewreka! **We got the expected 75% reduction in memory usage <small> *(excluding the first 2.3GB the container allocated)* </small>**!
 
-Truth is though, when running a 400GB test on a single container (remember, prod is 4x the beta containers), I somehow got **a ~10x reduction in memory** and I have absolutely no idea why. What Claude hallucinated is that it could be because if some GC shenenigains, but no idea. But nor do I care, since the result is better than what I've hoped for.
+Truth is though, when running a 400GB test on a single container (remember, prod is 4x the beta containers), I somehow got **a ~10x reduction in memory** and I have absolutely no idea why. What Claude hallucinated is that it could be because of some GC shenenigains, but no idea. But nor do I care, since the result is better than what I've hoped for.
 
 <img src="/res/math_paper.jpeg" alt="the 'napkin' math" width="50%">
 <small>Ugh, got the wrong approximation formula for ln(1-q) on the pic. Bummer...</small>
