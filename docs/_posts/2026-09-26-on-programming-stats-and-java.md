@@ -5,7 +5,9 @@ date:   2026-09-26
 categories: programming stats optimizations
 ---
 
-*With love, to my dear girlfriend*
+*With love, to my dear girlfriend who loves my nerdiness*
+
+---
 
 <small> *poof* </small>
 
@@ -63,7 +65,7 @@ As you can probably see, the memory will grow in a *more or less* linear fashion
 
 ---
 
-# 1st try at optimizing
+# 1st shot at optimizing
 *At first (slight spoilers)* I believed that we were inserting the PK into the sets, which happened to be a SHA-256 **string**, meaning it had **64 bytes instead of 32**. I think you can also see where I attacked first!
 
 In my naivite, retrospectively, I created a new class `HashedSHAKey`, which stored just 4 `long` variables. A `long` in Java is 8 bytes, so `8 x 4 = 32`, 50% out of 64. 
@@ -74,7 +76,7 @@ In my naivite, retrospectively, I created a new class `HashedSHAKey`, which stor
 
 **What the f\*#k??** This does not make any sense. Let me prompt Claude to see what it can *hallucinate* <small> (and verify the claims myself of course) </small>.
 
-*It seems that for every object in Java, an additional 12-16 bytes are allocated as the header of the object*. So for every `HashedSHAKey`, instead of 32 bytes, I had like 48. *That meant that I was using 50% more memory than I anticipated, meaning my upper bound was 25\% overall improvement*. With whatever schenenigains Java does under the hood for HashSet (*which, btw, IS significant for the memory overhead*), the math started mathing.
+*It seems that for every object in Java, an additional 12-16 bytes is allocated as the header of the object*. So for every `HashedSHAKey`, instead of 32 bytes, I had like 48. *That meant that I was using 50% more memory than I anticipated, meaning my upper bound was 25% overall improvement*. With whatever schenenigains Java does under the hood for HashSet (*which, btw, IS significant for the memory overhead*), the math started mathing.
 
 ---
 
@@ -115,6 +117,7 @@ Now, narrowing *what I thought to be* full SHA-256 strings to 8 bytes seemed **r
                └────────────────────┘
                     (loop forever)
 ```
+<br>
 
 Ultimately I got sick of wondering whether to use the birthday formula *(my mentor put that thought in my head; didn't even know what it was used for before)* or not, so I took my own approach.
 
@@ -173,12 +176,14 @@ R = 10 (approx)
 
 Wow, all this math only to find that, with the naive approach of having 1 set storing the first 8 bytes of the sha256, we'd toss a coin on the 10th run already. **This is bad**.
 
-Hmm, what if *instead of 1 set, we have **2**?* Doing the math again... *(truth be told I used a matlab script for this):*
+Hmm, what if *instead of 1 set, we have **2**?* One for the 1st byte, another for the 2nd byte. We'd need a false positive in both sets this way.
+
+Doing the math again... *(truth be told I used a matlab script for this):*
 
 ```
 P(no false-positives in both sets) = P(no false-positives in the first set) * P(no false-positives in the second set)
 ```
-<sub> We will suppose we have independent probabilities for simplicity (and I hope it is the case as well in the real world...) </sub>
+<sub>We will suppose we have independent probabilities for simplicity (and I hope it is the case as well in the real world...) </sub>
 
 {% highlight matlab %}
 
@@ -227,7 +232,7 @@ Phew, that scared me for a bit. Time to do this PR!
 ---
 
 # Conclusions
-I believe you can see why one might come to hate Java when it comes to certain things. There is no denying it is a good language for *some* things, but it is **certainly not a good language if you have lots of small objects**.
+I believe that, by now, you can see why one might come to hate Java when it comes to certain things. There is no denying it is a good language for *some* things, but it is **certainly not a good language if you have lots of small objects**.
 
 But aside from this, there is a really positive message behind all of this: **math *can* matter**. Yeah, sure, on a daily basis there are very few developers who are going to really need maths beyond simple computations. Now even less with the advent of LLMs, probabily.
 
