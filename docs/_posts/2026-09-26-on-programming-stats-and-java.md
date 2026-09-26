@@ -17,6 +17,7 @@ Coming back, I was part of a fairly small team, around 4.5 people (.5 due to 1 b
 
 Today I won't focus on the boring parts (integration tests), but rather I want to tell you, my dear reader, about **how my stats course finally mattered at the job, and about how much I hate Java**.
 
+---
 
 # Context
 The service I spent the most of my time working on was a DataStore service. As the name says, it is about... *storing data*.
@@ -178,7 +179,7 @@ Great! Time to run the test again aaand... Ewreka! **We got the expected 75% red
 
 Truth is though, when running a 400GB test on a single container (remember, prod is 4x the beta containers), I somehow got **a ~10x reduction in memory** and I have absolutely no idea why. What Claude hallucinated is that it could be because if some GC shenenigains, but no idea. But nor do I care, since the result is better than what I've hoped for.
 
-![the "napkin" math](/res/math_paper.jpeg)
+<img src="/res/math_paper.jpeg" alt="the 'napkin' math" width="0.5vw">
 <small>Ugh, got the wrong approximation formula for ln(1-q) on the pic. Bummer...</small>
 
 ---
