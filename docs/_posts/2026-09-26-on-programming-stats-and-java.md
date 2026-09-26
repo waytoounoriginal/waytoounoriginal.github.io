@@ -18,7 +18,7 @@ Coming back, I was part of a fairly small team, around 4.5 people (.5 due to 1 b
 Today I won't focus on the boring parts (integration tests), but rather I want to tell you, my dear reader, about **how my stats course finally mattered at the job, and about how much I hate Java**.
 
 
-## Context
+# Context
 The service I spent the most of my time working on was a DataStore service. As the name says, it is about... *storing data*.
 
 The initiative's *(I will use this term for lack of a better one; I promise to not use corpo-speak too much 🤙)* goal for this service was **scalability**. How much scalability? How about **being able to take on 1TB ingestions?**
@@ -31,8 +31,9 @@ Now, let's start with the interesting stuff!
 
 <small> \* - This is extrapolated. The measurments were taken in the Beta stage, where we had a container of 30GB RAM, and the Prod. containers had 120GB, so in reality I measured 100GB </small>
 
+---
 
-## The problem
+# The problem
 Now, the main problem was that we were holding a `HashSet<String>` in memory for a later pass after the ingestions. We basically had something like this:
 
 ```
@@ -57,8 +58,9 @@ for streamed_row in db.get_rows():
 
 As you can probably see, the memory will grow in a *more or less* linear fashion. Saying more or less because there is also GC involved and whatnot.
 
+---
 
-## 1st try at optimizing
+# 1st try at optimizing
 *At first (slight spoilers)* I believed that we were inserting the PK into the sets, which happened to be a SHA-256 **string**, meaning it had **64 bytes instead of 32**. I think you can also see where I attacked first!
 
 In my naivite, retrospectively, I created a new class `HashedSHAKey`, which stored just 4 `long` variables. A `long` in Java is 8 bytes, so `8 x 4 = 32`, 50% out of 64. 
@@ -71,8 +73,9 @@ In my naivite, retrospectively, I created a new class `HashedSHAKey`, which stor
 
 *It seems that for every object in Java, an additional 12-16 bytes are allocated as the header of the object*. So for every `HashedSHAKey`, instead of 32 bytes, I had like 48. *That meant that I was using 50% more memory than I anticipated, meaning my upper bound was 25\% overall improvement*. With whatever schenenigains Java does under the hood for HashSet (*which, btw, IS significant for the memory overhead*), the math started mathing.
 
+---
 
-## Libraries & probabilities
+# Libraries & probabilities
 I moved on to a different approach, and eyed this one library *with close to 0 overhead*, **fastutil**. There was one problem though: **there aren't any 32-byte HashSet implementations, only 8-byte**.
 
 Now, narrowing *what I thought to be* full SHA-256 strings to 8 bytes seemed **risky, to say the least**. Thankfully, my mentor, who had a master in statistics, thought the same thing and prompted me to compute the *probabilities of false-positives in the narrowing case*.
@@ -83,7 +86,8 @@ Ultimately I got sick of wondering whether to use the birthday formula *(my ment
 
 **You can skip the math here if you'd like, but it is interesting!**
 
-We are also taking the worst case scenario, in which we constantly add rows to our database
+We are also taking the worst case scenario, in which we constantly add rows to our database.
+
 
 ```
 Goal = 1TB
@@ -108,6 +112,7 @@ P(no false-positives in all R runs)
 
 Let's say that an acceptable rate of false-positive is 50%:
 
+
 ```
 0.5 = (1 - q)^(N * R * (R - 1) / 2)
 
@@ -121,6 +126,7 @@ ln(0.5) = N * R * (R - 1) / 2 * ln(1 - q)
 ```
 
 Since q is really small, we can approximate `ln(1 - q) = -q`
+
 
 ```
 2 * ln(0.5) / (N * -q) = R^2 - R
@@ -172,17 +178,21 @@ Great! Time to run the test again aaand... Ewreka! **We got the expected 75% red
 
 Truth is though, when running a 400GB test on a single container (remember, prod is 4x the beta containers), I somehow got **a ~10x reduction in memory** and I have absolutely no idea why. What Claude hallucinated is that it could be because if some GC shenenigains, but no idea. But nor do I care, since the result is better than what I've hoped for.
 
-![the "napkin" math](../res/math_paper.jpeg)
+![the "napkin" math](/res/math_paper.jpeg)
 <small>Ugh, got the wrong approximation formula for ln(1-q) on the pic. Bummer...</small>
 
-## Final sanity check
+---
+
+# Final sanity check
 Before checking everything off and putting the PR for reviewing, I decided to trust my gut and look again inside the code. *And yeah, remember when I said str_that_is_not_PK was a 64-character SHA-256 string?* **It wasn't.** It could really be anything; I was confusing it with the PK for the past 3 days.
 
 Now, were my efforts in vain? **Not at all; with the set approach I was hashing the string to sha256 either way, so I was still working on the same probability space**.
 
 Phew, that scared me for a bit. Time to do this PR!
 
-## Conclusions
+---
+
+# Conclusions
 I believe you can see why one might come to hate Java when it comes to certain things. There is no denying it is a good language for *some* things, but it is **certainly not a good language if you have lots of small objects**.
 
 But aside from this, there is a really positive message behind all of this: **math *can* matter**. Yeah, sure, on a daily basis there are very few developers who are going to really need maths beyond simple computations. Now even less with the advent of LLMs, probabily.
