@@ -26,10 +26,11 @@ header_pages:
 title: Yet-another-personal-blog
 email: mihai.tira@yahoo.ro
 description: >- # this means to ignore newlines until "baseurl:"
-  just another engineering blog. I do not expect to post much here,
-  but I hope the content will be interesting.
+  Yet another "another personal blog".
+  Nothing special, I just hope to provide some stories about my engineering career,
+  in a post-LLM era.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://waytoounoriginal.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://yet-another-another-personal-blog.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  waytoounoriginal
 
 # Build settings

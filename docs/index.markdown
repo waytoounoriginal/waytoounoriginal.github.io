@@ -3,7 +3,7 @@
 # To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 
 layout: default
-title: yet-another-personal-blog
+title: Y.A.A.P.B.
 permalink: /
 ---
 
