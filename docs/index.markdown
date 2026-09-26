@@ -9,7 +9,10 @@ permalink: /
 
 Welcome!
 
-This is just another personal blog. I hope I will post engaging enough content.
+This is yet another "another personal blog" (Y.A.A.P.B.)
+Nothing special, I just hope to provide some stories about my engineering career, in a post-LLM era.
+
+---
 
 {% for post in site.posts %}
 [{{ post.date | date: "%Y-%m-%d" }}] [{{ post.title }}]({{ post.url | relative_url }})
