@@ -13,7 +13,7 @@ categories: programming stats optimizations
 
 That's the sound of this blog being born into existence, as this is the first post on it. It is also about the problem that gave me the idea to have a blog in the first place.
 
-As the people coming from my Linkedin might know, I am wrapping up my internship at Amazon. It wasn't the usual internship, though, in the sense that I did not have my own self-contained project, but rather I was part of *some "stabilisation initiative"* for an existing project.
+As the people coming from my Linkedin might know, I am currently wrapping up my internship. It wasn't the usual internship experience, though, in the sense that I did not have my own self-contained project, but rather I was part of *some "stabilisation initiative"* for an existing project.
 
 <small> *As a side note, I believe that me having to work on production systems has allowed me to truly enjoy this internship, and I hope more internships would take this approach. It also allowed me to see how fun it is to benchmark and see colorful lines go up and down!* </small>
 
@@ -30,11 +30,11 @@ The initiative's *(I will use this term for lack of a better one; I promise to n
 
 *I am trying to provide as little context as possible so that I don't somehow violate my NDA, but the overarching project was working with regulatory data, and we had to ingest and store this data on our end*
 
-For context, from my measurments (*and previous **refactor and optimisation** of the service*) we were able to ingest **~400 GB\***.
+For context, from my measurments (*and previous **refactor and optimisation** of the service*) we were able to ingest **hundreds of GB\***.
 
 Now, let's start with the interesting stuff!
 
-<small> \* - This is extrapolated. The measurments were taken in the Beta stage, where we had a container of 30GB RAM, and the Prod. containers had 120GB, so in reality I measured 100GB </small>
+<small> \* - This is extrapolated. The measurments were taken in the Beta stage, where we had a container of 4x smaller than the Prod </small>
 
 ---
 
@@ -147,7 +147,7 @@ P(no false-positives in all R runs)
 
 ```
 
-Let's say that an acceptable rate of false-positive is 50%:
+Let's say that an acceptable p of encountering at least 1 false positive in all R runs is 0.5:
 
 
 ```
