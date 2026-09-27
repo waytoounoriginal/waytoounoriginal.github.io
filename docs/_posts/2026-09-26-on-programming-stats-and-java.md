@@ -187,14 +187,6 @@ P(no false-positives in both sets) = P(no false-positives in the first set) * P(
 
 {% highlight matlab %}
 
-% Basically we have that the prob of an iteration having 0 false-positives
-% is (1 - q)
-
-% a run has N iterations, so a run with 0 false-positives has basically
-% (1 - q)^N probs of having 0 false-positives
-
-% Then we have to solve Prod_0^R[ (1-q)^N ] >= 0.5, so we find out the 
-% R for which the probability of having 0 false-positives goes to less than 50%
 N = 500000000;
 q = (N / 2^64)^2;
 
