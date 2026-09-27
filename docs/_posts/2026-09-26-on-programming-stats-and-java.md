@@ -24,7 +24,7 @@ Today I won't focus on the boring parts (integration tests), but rather I want t
 ---
 
 # Context
-The service I spent the most of my time working on was a DataStore service. As the name says, it is about... *storing data*.
+The service I spent most of my time working on was a DataStore service. As the name says, it is about... *storing data*.
 
 The initiative's *(I will use this term for lack of a better one; I promise to not use corpo-speak too much 🤙)* goal for this service was **scalability**. How much scalability? How about **being able to take on 1TB ingestions?**
 
@@ -59,7 +59,7 @@ for streamed_row in db.get_rows():
     // do stuff
 ```
 
-<small> *There might have been a better arch. but I wasn't going to overhaul already existent data, so I did what I could* </small>
+<small> *There might have been a better arch, but I wasn't going to overhaul already existent data, so I did what I could* </small>
 
 As you can probably see, the memory will grow in a *more or less* linear fashion. Saying more or less because there is also GC involved and whatnot.
 
@@ -74,16 +74,16 @@ In my naivety, retrospectively, I created a new class `HashedSHAKey`, which stor
 
 > *-18% in memory utilization...*
 
-**What the f\*#k??** This does not make any sense. Let me prompt Claude to see what it can *hallucinate* <small> (and verify the claims myself of course) </small>.
+**What the f\*#k??** This does not make any sense. Let me prompt Claude to see what it can *hallucinate* <small> (and verify the claims myself, of course) </small>.
 
 *It seems that for every object in Java, an additional 12-16 bytes is allocated as the header of the object*. So for every `HashedSHAKey`, instead of 32 bytes, I had like 48. *That meant that I was using 50% more memory than I anticipated, meaning my upper bound was a 25% overall improvement*. With whatever shenanigans Java does under the hood for HashSet (*which, btw, IS significant for the memory overhead*), the math started mathing.
 
 ---
 
 # Libraries & probabilities
-I moved on to a different approach, and eyed this one library *with close to 0 overhead*, **fastutil**. There was one problem though: **there aren't any 32-byte HashSet implementations, only 8-byte**.
+I moved on to a different approach, and eyed this one library *with close to 0 overhead*, **fastutil**. There was one problem, though: **there aren't any 32-byte HashSet implementations, only 8-byte**.
 
-Now, narrowing *what I thought to be* full SHA-256 strings to 8 bytes seemed **risky, to say the least**. Thankfully, my mentor, who had a master in statistics, thought the same thing and prompted me to compute the *probabilities of false-positives in the narrowing case*.
+Now, narrowing *what I thought to be* full SHA-256 strings to 8 bytes seemed **risky, to say the least**. Thankfully, my mentor, who had a master's in statistics, thought the same thing and prompted me to compute the *probabilities of false-positives in the narrowing case*.
 
 *This started a series of 3 days of a vicious cycle*
 ```text
@@ -174,7 +174,7 @@ Now we can replace N and q, solve for R and get...
 > R = 10 (approx)
 
 
-Wow, all this math only to find that, with the naive approach of having 1 set storing the first 8 bytes of the sha256, we'd toss a coin on the 10th run already. **This is bad**.
+Wow, all this math only to find that, with the naive approach of having 1 set storing the first 8 bytes of the SHA256, we'd toss a coin on the 10th run already. **This is bad**.
 
 Hmm, what if *instead of 1 set, we have **2**?* One for the first 8 bytes, another for the next 8 bytes. We'd need a false positive in both sets this way.
 
@@ -223,7 +223,7 @@ The truth is, though, that when running a 400GB test on a single container (reme
 ---
 
 # Final sanity check
-Before checking everything off and putting the PR for reviewing, I decided to trust my gut and look again inside the code. *And yeah, remember when I said str_that_is_not_PK was a 64-character SHA-256 string?* **It wasn't.** It could really be anything; I was confusing it with the PK for the past 3 days.
+Before checking everything off and putting the PR up for review, I decided to trust my gut and look again inside the code. *And yeah, remember when I said str_that_is_not_PK was a 64-character SHA-256 string?* **It wasn't.** It could really be anything; I was confusing it with the PK for the past 3 days.
 
 Now, were my efforts in vain? **Not at all; with the set approach I was hashing the string to sha256 either way, so I was still working on the same probability space**.
 
@@ -234,7 +234,7 @@ Phew, that scared me for a bit. Time to do this PR!
 # Conclusions
 I believe that, by now, you can see why one might come to hate Java when it comes to certain things. There is no denying it is a good language for *some* things, but it is **certainly not a good language if you have lots of small objects**.
 
-But aside from this, there is a really positive message behind all of this: **math *can* matter**. Yeah, sure, on a daily basis there are very few developers who are going to really need maths beyond simple computations. Now even less with the advent of LLMs, probabily.
+But aside from this, there is a really positive message behind all of this: **math *can* matter**. Yeah, sure, on a daily basis there are very few developers who are going to really need maths beyond simple computations. Now even less with the advent of LLMs, probably.
 
 But man, oh man! How good it feels to solve problems again! I can say that for the past few days I've had the same feeling I had while programming in the pre-LLM era. *It felt GREAT*. I truly hope to have more such opportunities from now on!
 
@@ -247,7 +247,7 @@ But I believe that's all for this post. Hopefully I did not bore you too much, d
 # Update (27.09.2026)
 Since writing this article I've been reminded of this teeny tiny probabilistic data structure: **Bloom Filters**.
 
-Honestly, I am not well-versed enough in using bloom filters, or computing the probabilities for them, but looking at the [Wikipedia article for them](https://en.wikipedia.org/wiki/Bloom_filter), we can see the following section:
+Honestly, I am not well-versed enough in using Bloom Filters, or computing the probabilities for them, but looking at the [Wikipedia article for them](https://en.wikipedia.org/wiki/Bloom_filter), we can see the following section:
 
 ## Optimal number of hash functions
 > The number of hash functions, k, must be a positive integer. Putting this constraint aside, for a given m and n, the value of k that minimizes the false positive probability is
@@ -258,11 +258,13 @@ Where `m = the required number of bits`, `n = the number of inserted elements`. 
 The same section does the math for us and gives us the formula for `m`:
 > `m = -n * ln(p) / ln(2)^2`
 
-Honestly, there has been enough math in this post, we are just going to use [this bloom filter calculator, made by Thomas Hurst](https://hur.st/bloomfilter). Plugging in the same `(500M / 2^64)^2` probability we got for the 2 set approach:
+Honestly, there has been enough math in this post, so we are just going to use [this Bloom Filter calculator, made by Thomas Hurst](https://hur.st/bloomfilter). Plugging in the same `(500M / 2^64)^2` probability we got for the 2-set approach:
 
 > k = 70
 > m = 5.9GB
 
-Technically, a bloom filter would take less space (not by a large margin), but instead of **1** hash, we would have **70** hashes.
+Technically, a Bloom Filter would take less space (not by a large margin), but instead of **1** hash, we would have **70** hashes.
 
-Taking this into account, I believe the approach we settled on using might be the better one, but I'll admit that I was wrong for not testing it beforehand. Will promise to *try* to test it before the internship ends though!
+*Truth be told, these are the computations for the **whole 128-bit space** (or 2-choice 64-bit space) probabilities, **not chosen for the project's true needs**. It's very possible the project won't ever need that level of precision, meaning the p chosen could be **several orders of magnitude smaller** (e.g. 1e-8, as an example).*
+
+Taking this into account, I believe the approach we settled on using might be the better one, but I'll admit that I was wrong for not testing it beforehand. I promise to *try* to test it before the internship ends though!
