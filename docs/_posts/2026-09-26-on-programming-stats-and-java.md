@@ -13,11 +13,11 @@ categories: programming stats optimizations
 
 That's the sound of this blog being born into existence, as this is the first post on it. It is also about the problem that gave me the idea to have a blog in the first place.
 
-As the people coming from my Linkedin might know, I am currently wrapping up my internship. It wasn't the usual internship experience, though, in the sense that I did not have my own self-contained project, but rather I was part of *some "stabilisation initiative"* for an existing project.
+As the people coming from my LinkedIn might know, I am currently wrapping up my internship. It wasn't the usual internship experience, though, in the sense that I did not have my own self-contained project, but rather I was part of *some "stabilisation initiative"* for an existing project.
 
 <small> *As a side note, I believe that me having to work on production systems has allowed me to truly enjoy this internship, and I hope more internships would take this approach. It also allowed me to see how fun it is to benchmark and see colorful lines go up and down!* </small>
 
-Coming back, I was part of a fairly small team, around 4.5 people (.5 due to 1 being active in 2 projects), so, honestly, work has felt more like a startup than a FAANG (or MAANG, MANGOS, GAYMAN, or whatever it will be next week). I basically had my cake and ate it too, since I had a rather large amount of ownership and freedom in my tasks.
+Coming back, I was part of a fairly small team, around 4.5 people (.5 because one person was active in two projects), so, honestly, work has felt more like a startup than a FAANG (or MAANG, MANGOS, GAYMAN, or whatever it will be next week). I basically had my cake and ate it too, since I had a rather large amount of ownership and freedom in my tasks.
 
 Today I won't focus on the boring parts (integration tests), but rather I want to tell you, my dear reader, about **how my stats course finally mattered at the job, and about how much I hate Java**.
 
@@ -30,11 +30,11 @@ The initiative's *(I will use this term for lack of a better one; I promise to n
 
 *I am trying to provide as little context as possible so that I don't somehow violate my NDA, but the overarching project was working with regulatory data, and we had to ingest and store this data on our end*
 
-For context, from my measurments (*and previous **refactor and optimisation** of the service*) we were able to ingest **hundreds of GB\***.
+For context, from my measurements (*and previous **refactoring and optimisation** of the service*) we were able to ingest **hundreds of GB\***.
 
 Now, let's start with the interesting stuff!
 
-<small> \* - This is extrapolated. The measurments were taken in the Beta stage, where we had a container of 4x smaller than the Prod </small>
+<small> \* - This is extrapolated. The measurements were taken in the beta stage, where we had a container one-fourth the size of the production container. </small>
 
 ---
 
@@ -68,7 +68,7 @@ As you can probably see, the memory will grow in a *more or less* linear fashion
 # 1st shot at optimizing
 *At first (slight spoilers)* I believed that we were inserting the PK into the sets, which happened to be a SHA-256 **string**, meaning it had **64 bytes instead of 32**. I think you can also see where I attacked first!
 
-In my naivite, retrospectively, I created a new class `HashedSHAKey`, which stored just 4 `long` variables. A `long` in Java is 8 bytes, so `8 x 4 = 32`, 50% out of 64. 
+In my naivety, retrospectively, I created a new class `HashedSHAKey`, which stored just 4 `long` variables. A `long` in Java is 8 bytes, so `8 x 4 = 32`, 50% of 64. 
 
 **Nice! We probably saved ~50% of the memory! We can pat ourselves on the back and call it a day!** We could now scale to ~800GB, probably way above this project's needs in this lifetime. Let's just see what the tests say...
 
@@ -76,7 +76,7 @@ In my naivite, retrospectively, I created a new class `HashedSHAKey`, which stor
 
 **What the f\*#k??** This does not make any sense. Let me prompt Claude to see what it can *hallucinate* <small> (and verify the claims myself of course) </small>.
 
-*It seems that for every object in Java, an additional 12-16 bytes is allocated as the header of the object*. So for every `HashedSHAKey`, instead of 32 bytes, I had like 48. *That meant that I was using 50% more memory than I anticipated, meaning my upper bound was 25% overall improvement*. With whatever schenenigains Java does under the hood for HashSet (*which, btw, IS significant for the memory overhead*), the math started mathing.
+*It seems that for every object in Java, an additional 12-16 bytes is allocated as the header of the object*. So for every `HashedSHAKey`, instead of 32 bytes, I had like 48. *That meant that I was using 50% more memory than I anticipated, meaning my upper bound was a 25% overall improvement*. With whatever shenanigans Java does under the hood for HashSet (*which, btw, IS significant for the memory overhead*), the math started mathing.
 
 ---
 
@@ -176,7 +176,7 @@ R = 10 (approx)
 
 Wow, all this math only to find that, with the naive approach of having 1 set storing the first 8 bytes of the sha256, we'd toss a coin on the 10th run already. **This is bad**.
 
-Hmm, what if *instead of 1 set, we have **2**?* One for the frist 8 bytes, another for the next 8 bytes. We'd need a false positive in both sets this way.
+Hmm, what if *instead of 1 set, we have **2**?* One for the first 8 bytes, another for the next 8 bytes. We'd need a false positive in both sets this way.
 
 Doing the math again... *(truth be told I used a matlab script for this):*
 
@@ -213,9 +213,9 @@ Smallest run = 1942642
 
 Honestly, if the math is right, and by absurd a 1TB ingestion would run each day, **it vastly outlives this project**.
 
-Great! Time to run the test again aaand... Ewreka! **We got the expected 75% reduction in memory usage <small> *(excluding the first 2.3GB the container allocated)* </small>**!
+Great! Time to run the test again aaand... Eureka! **We got the expected 75% reduction in memory usage <small> *(excluding the first 2.3GB the container allocated)* </small>**!
 
-Truth is though, when running a 400GB test on a single container (remember, prod is 4x the beta containers), I somehow got **a ~10x reduction in memory** and I have absolutely no idea why. What Claude hallucinated is that it could be because of some GC shenenigains, but no idea. But nor do I care, since the result is better than what I've hoped for.
+The truth is, though, that when running a 400GB test on a single container (remember, production has four times as many containers as beta), I somehow got **a ~10x reduction in memory**, and I have absolutely no idea why. Claude hallucinated that it could be because of some GC shenanigans, but I have no idea. But nor do I care, since the result is better than what I hoped for.
 
 <img src="/res/math_paper.jpeg" alt="the 'napkin' math" width="50%">
 <small>Ugh, got the wrong approximation formula for ln(1-q) on the pic. Bummer...</small>
@@ -236,9 +236,9 @@ I believe that, by now, you can see why one might come to hate Java when it come
 
 But aside from this, there is a really positive message behind all of this: **math *can* matter**. Yeah, sure, on a daily basis there are very few developers who are going to really need maths beyond simple computations. Now even less with the advent of LLMs, probabily.
 
-But man, oh man! How good it feels to solve problems again! I can say that for the past few days I've had the same feeling I had while programming pre-LLM era. *It felt GREAT*. I truly hope to be have more such opportunities from now on!
+But man, oh man! How good it feels to solve problems again! I can say that for the past few days I've had the same feeling I had while programming in the pre-LLM era. *It felt GREAT*. I truly hope to have more such opportunities from now on!
 
-But I believe that's all for this post. Hopefully I did not bore you too much, dear reader. 
+But I believe that's all for this post. Hopefully I did not bore you too much, dear reader.
 
 'Til we see again!
 
