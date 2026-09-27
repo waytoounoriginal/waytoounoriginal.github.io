@@ -72,7 +72,7 @@ In my naivety, retrospectively, I created a new class `HashedSHAKey`, which stor
 
 **Nice! We probably saved ~50% of the memory! We can pat ourselves on the back and call it a day!** We could now scale to ~800GB, probably way above this project's needs in this lifetime. Let's just see what the tests say...
 
-*-18% in memory utilization...*
+> *-18% in memory utilization...*
 
 **What the f\*#k??** This does not make any sense. Let me prompt Claude to see what it can *hallucinate* <small> (and verify the claims myself of course) </small>.
 
@@ -170,9 +170,9 @@ Since q is really small, we can approximate `ln(1 - q) = -q`
 ```
 
 Now we can replace N and q, solve for R and get...
-```
-R = 10 (approx)
-```
+
+> R = 10 (approx)
+
 
 Wow, all this math only to find that, with the naive approach of having 1 set storing the first 8 bytes of the sha256, we'd toss a coin on the 10th run already. **This is bad**.
 
@@ -207,9 +207,9 @@ fprintf('Smallest run = %d\n', R);
 {% endhighlight %}
 
 Plugging this in gives us:
-```
-Smallest run = 1942642
-```
+
+> Smallest run = 1942642
+
 
 Honestly, if the math is right, and by absurd a 1TB ingestion would run each day, **it vastly outlives this project**.
 
@@ -242,3 +242,27 @@ But I believe that's all for this post. Hopefully I did not bore you too much, d
 
 'Til we see again!
 
+---
+
+# Update (27.09.2026)
+Since writing this article I've been reminded of this teeny tiny probabilistic data structure: **Bloom Filters**.
+
+Honestly, I am not well-versed enough in using bloom filters, or computing the probabilities for them, but looking at the [Wikipedia article for them](https://en.wikipedia.org/wiki/Bloom_filter), we can see the following section:
+
+## Optimal number of hash functions
+> The number of hash functions, k, must be a positive integer. Putting this constraint aside, for a given m and n, the value of k that minimizes the false positive probability is
+> `k = m/n * ln(2)`
+
+Where `m = the required number of bits`, `n = the number of inserted elements`. We are going to use `p = the FP (false-positive) probability desired`.
+
+The same section does the math for us and gives us the formula for `m`:
+> `m = -n * ln(p) / ln(2)^2`
+
+Honestly, there has been enough math in this post, we are just going to use [this bloom filter calculator, made by Thomas Hurst](https://hur.st/bloomfilter). Plugging in the same `(500M / 2^64)^2` probability we got for the 2 set approach:
+
+> k = 70
+> m = 5.9GB
+
+Technically, a bloom filter would take less space (not by a large margin), but instead of **1** hash, we would have **70** hashes.
+
+Taking this into account, I believe the approach we settled on using might be the better one, but I'll admit that I was wrong for not testing it beforehand. Will promise to *try* to test it before the internship ends though!
